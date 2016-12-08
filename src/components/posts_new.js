@@ -1,15 +1,28 @@
-import React, {Component} from 'react';
+import React, {Component,PropTypes} from 'react';
 import {reduxForm} from 'redux-form';
 import {createPost} from '../actions/index';
 import {Link} from 'react-router';
 
 class PostsNew extends Component {
 
+    static contextTypes = {
+        router: PropTypes.object
+    };
+
+    onSubmit(props) {
+        this.props.createPost(props)
+            .then(() => {
+                //blog post has been created, navigate user to the index page
+                //We navigate by calling this.context.router.push with the new path
+               this.context.router.push('/'); 
+            });
+    }
+
     render() {
-        const {fields: {title, category, content}, handleSubmit} = this.props;
+        const {fields: {title, categories, content}, handleSubmit} = this.props;
         
         return (  
-            <form onSubmit={handleSubmit(this.props.createPost)}>
+            <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
                 <h3>Create a Blog Post</h3>
                 <div className={`form-group ${title.touched && title.invalid ? 'has-danger' : ''}`}>
                     <label>Title</label>
@@ -18,11 +31,11 @@ class PostsNew extends Component {
                     {title.touched ? title.error : ''}
                     </div>
                 </div>
-                  <div className={`form-group ${category.touched && category.invalid ? 'has-danger' : ''}`}>
+                  <div className={`form-group ${categories.touched && categories.invalid ? 'has-danger' : ''}`}>
                     <label>Categories</label>
-                    <input type='text' className='form-control' {...category} />
+                    <input type='text' className='form-control' {...categories} />
                     <div className='text-help'>
-                    {category.touched ? category.error : ''}
+                    {categories.touched ? categories.error : ''}
                     </div>
                 </div>
                   <div className={`form-group ${content.touched && content.invalid ? 'has-danger' : ''}`}>
@@ -45,8 +58,8 @@ function validate(values) {
     if(!values.title) {
         errors.title = 'Enter a username';
     }
-    if(!values.category) {
-        errors.category = 'Enter a category';
+    if(!values.categories) {
+        errors.categories = 'Enter a categories';
     }
     if(!values.content) {
         errors.content = 'Enter some content';
@@ -56,6 +69,6 @@ function validate(values) {
 
 export default reduxForm({
     form:'PostsNewForm',
-    fields: ['title', 'category', 'content'],
+    fields: ['title', 'categories', 'content'],
     validate
 }, null, {createPost: createPost})(PostsNew);
