@@ -12,7 +12,6 @@ export function fetchPosts() {
 }
 
 export function createPost(props) {
-    console.log('Ive been run')
     const request = axios.post(`${ROOT_URL}/posts${API_KEY}`, props);
     return {
         type: 'CREATE_POSTS',
@@ -24,6 +23,14 @@ export function fetchPost(id) {
     const request = axios.get(`${ROOT_URL}/posts/${id}${API_KEY}`);
     return {
         type: 'FETCH_POST',
+        payload: request
+    };
+}
+
+export function deletePost(id) {
+    const request = axios.delete(`${ROOT_URL}/posts/${id}${API_KEY}`);
+    return {
+        type: 'DELETE_POST',
         payload: request
     };
 }
